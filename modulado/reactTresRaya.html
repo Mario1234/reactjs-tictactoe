@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>tres en Raya</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="contenedor1"></div>
+	<script type="application/javascript" src="./utilidades.js"></script>
+	<script type="text/jsx" src="./casilla.jsx"></script>
+	<script type="text/jsx" src="./fila.jsx"></script>
+	<script type="text/jsx" src="./tablero.jsx"></script>
+    <script type="text/babel">	
+		
+		//carga un tablero cuadrado de 3*3 en un contenedor(className="game-board") como resultado de la creacion del objeto Tablero con atributo tamanio=3
+		class PantallaPrincipal extends React.Component {
+		  render() {
+			const TAMANIO_TABLERO = 3;
+			return (
+			  <div className="game">
+				<div className="game-board">
+				  <Tablero tamanio={TAMANIO_TABLERO}/>
+				</div>
+				<div className="game-info">
+				  <div>{/* status */}</div>
+				  <ol>{/* TODO */}</ol>
+				</div>
+			  </div>
+			);
+		  }
+		}
+
+		// ========================================
+		//carga el resultado de la creacion del objeto PantallaPrincipal en el contenedor1
+		ReactDOM.render(
+		  <PantallaPrincipal />,
+		  document.getElementById('contenedor1')
+		);
+
+    </script>
+    <!--
+      Note: this page is a great way to try React but it's not suitable for production.
+      It slowly compiles JSX with Babel in the browser and uses a large development build of React.
+
+      To set up a production-ready React build environment, follow these instructions:
+      * https://reactjs.org/docs/add-react-to-a-new-app.html
+      * https://reactjs.org/docs/add-react-to-an-existing-app.html
+
+      You can also use React without JSX, in which case you can remove Babel:
+      * https://reactjs.org/docs/react-without-jsx.html
+      * https://reactjs.org/docs/cdn-links.html
+    -->
+  </body>
+</html>
