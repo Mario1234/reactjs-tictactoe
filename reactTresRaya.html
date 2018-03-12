@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>tres en Raya</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="contenedor1"></div>
+    <script type="text/babel">
+		class Casilla extends React.Component {			
+			//devuelve un DOM del estilo:
+			//<button id="0-1" className="claseCasilla"  onClick="atiendeClick(0,1)"></button>
+			render() {
+				var jCol = this.props.indiceColumna;
+				var iFil = this.props.indiceFila;
+				var identificador = iFil+"-"+jCol;
+				//this.props.casillaMuestra es el objeto del modelo inmutable this.state.tableroMuestra[i][j]
+				//siempre que this.state.tableroMuestra[i][j] se modifique se modificara esta vista, es decir, el valor del boton
+				//parece obligatorio usar una funcion lambda en el onClick
+				//clicarCasilla(iFil,jCol) llama a atiendeClick(iFil,jCol)
+				return (
+				  <button id={identificador} className="claseCasilla"  onClick={ () => this.props.clicarCasilla(iFil,jCol)}>
+					{this.props.casillaMuestra}
+				  </button>
+				);
+			}
+		}
+		class Fila extends React.Component {
+			
+			creaCasillasDeFila(i,tam,filMuesAux,clicarFilaAux){	
+				var casillasDeFilaAux = [];
+				var j = 0;				
+				for(j=0;j<tam;j++){
+					var ind = (i*tam)+j;
+					casillasDeFilaAux.push(<Casilla key={ind} clicarCasilla={clicarFilaAux} casillaMuestra={filMuesAux[j]} indiceFila={i} indiceColumna={j}/>);
+				}
+				return casillasDeFilaAux;
+			}
+			
+			//devuelve un objeto DOM del estilo:
+			//<div className="board-row">
+			//<button id="0-0" className="claseCasilla"  onClick="atiendeClick(0,0)"></button>
+			//<button id="0-1" className="claseCasilla"  onClick="atiendeClick(0,1)"></button>
+			//</div>
+			render() {
+				var clicarFilaAux = this.props.clicarFila;
+				var filMuesAux = this.props.filaMuestra;
+				var tam = this.props.tamanio;
+				var i = this.props.indice;
+				return (
+				  <div className="board-row">
+						{this.creaCasillasDeFila(i,tam,filMuesAux,clicarFilaAux)}
+				  </div>
+				);
+			}
+		}
+
+		class Tablero extends React.Component {
+			//este constructor es necesario para tener objetos inmutables, como por ejemplo  esta variable matriz
+			//todos los objetos inmutables se guardan en this.state
+			//mientras que los objetos mutables se guardan en this.props, estos ultimos son equivalentes a atributos de objeto en Java
+			//los inmutables como esta matriz se utilizan para refrescar la vista de manera ligera en React
+			//la representacion logica, el modelo es esta matriz
+			constructor(props) {
+				super(props);
+				//crea una matriz n*n que representa el tablero
+				var tabAux = new Array(props.tamanio);
+				for (var i = 0; i < props.tamanio; i++) {
+					tabAux[i] = new Array(props.tamanio);
+					tabAux[i].fill(null);
+				}
+				//siguienteX marca de que jugador es el turno
+				this.state = {
+				  tableroMuestra: tabAux,
+				  siguienteX: true,
+				};
+			}
+			
+			calcularGanador(tabAux) {
+				for(var k = 0; k < tabAux.length; k++) {					
+					if (tabAux[k][0] && tabAux[k][0] === tabAux[k][1] && tabAux[k][0] === tabAux[k][2]) {
+					  return tabAux[k][0];
+					}
+					if (tabAux[0][k] && tabAux[0][k] === tabAux[1][k] && tabAux[0][k] === tabAux[2][k]) {
+					  return tabAux[0][k];
+					}					
+				}
+				if (tabAux[0][0] && tabAux[0][0] === tabAux[1][1] && tabAux[0][0] === tabAux[2][2]) {
+				  return tabAux[0][0];
+				}
+				if (tabAux[0][2] && tabAux[0][2] === tabAux[1][1] && tabAux[0][2] === tabAux[2][0]) {
+				  return tabAux[0][2];
+				}
+				return null;
+			}
+			
+			//un copia matriz generico
+			//copia la matrizOrigen en el objeto matrizDestino, copia el contenido de cada casilla
+			copiaMatrizRecurivamente(matrizOrigen,tam){
+				const matrizDestino = [];
+				//recorre cada fila y y copia su contenido
+				for (var k = 0; k < tam; k++) {
+					//copia cada casilla de esta fila
+					matrizDestino[k] = matrizOrigen[k].slice();
+				}
+				return matrizDestino;
+			}
+			
+			//esta funcion modifica el estado(inmutable) de este objeto, el tablero, es decir, fuerza un refresco de la vista
+			//this.setState actualiza el objeto(tableroMuestra) del modelo que es inmutable lo que fuerza el refresco el elemento que le haga referencia
+			//por ejemplo, atiendeClick(0,1,3) actualiza tableroMuestra[0][1] por lo que refresca el boton que hace referencia a este valor, el boton
+			//con id="0-1"
+			atiendeClick(iFil,jCol) {
+				console.log(iFil+"-"+jCol);
+				//si ya ha ganado alguien o la casilla esta rellena entonces no hacer nada
+				if (this.calcularGanador(this.state.tableroMuestra) || this.state.tableroMuestra[iFil][jCol]) {
+					return;//sale sin hacer nada
+				}
+				//copia tableroMuestra, no modifica el existente
+				const tabAux=this.copiaMatrizRecurivamente(this.state.tableroMuestra,this.state.tableroMuestra.length);
+				//rellena segun turno de jugador
+				if(this.state.siguienteX){
+					tabAux[iFil][jCol] = 'X';
+				}
+				else{
+					tabAux[iFil][jCol] = 'O';
+				}
+				//cambia el objeto antiguo por el nuevo en vez de modificar el antiguo
+				//actualiza quien es siguiente
+				this.setState({
+					tableroMuestra: tabAux,
+					siguienteX: !this.state.siguienteX,
+					});
+			}
+			
+			//por cada fila de 0 a n-1 crea un objeto Fila
+			//cada uno de estos objetos Fila tiene asociada la funcion atiendeClick a los eventos onClick de cada uno de sus botones(ver clase Casilla, arriba)
+			creaFilas(tam){
+				//lista de elementos React a devolver para que React cree la lista DOM equivalentes
+				//es decir, si le damos una lista [<ul><li>1</li><li>2</li><li>3</li></ul>] dibujara <ul><li>1</li> <li>2</li> <li>3</li></ul>
+				var filasAux = [];
+				var i = 0;
+				for(i=0;i<tam;i++){
+					//crea un objeto Fila y lo que nos devuelva su render lo aniade a la lista 
+					//el uso de la funcion lambda es obligatorio: (iFil,jCol)=>this.atiendeClick(iFil,...
+					filasAux.push(<Fila key={i} indice={i} tamanio={tam} filaMuestra={this.state.tableroMuestra[i]} clicarFila={(iFil,jCol)=>this.atiendeClick(iFil,jCol)}/>);
+				}
+				return filasAux;
+			}
+			
+			//crea el tablero dentro de un contenedor anonimo
+			//el tablero es lo que devuelve creaFilas(n)
+			//este render devuelve un objeto DOM del estilo:
+			//<div>
+			//<div className="claseEstado">Siguiente jugador: X</div>
+			//<div className="board-row">
+			//<button id="0-0" className="claseCasilla"  onClick="atiendeClick(0,0)"></button>
+			//<button id="0-1" className="claseCasilla"  onClick="atiendeClick(0,1)"></button>
+			//</div>
+			//<div className="board-row">
+			//<button id="1-0" className="claseCasilla"  onClick="atiendeClick(1,0)"></button>
+			//<button id="1-1" className="claseCasilla"  onClick="atiendeClick(1,1)"></button>
+			//</div>
+			//</div>
+			render() {				
+				const ganador = this.calcularGanador(this.state.tableroMuestra);
+				var siguiente = 'O';
+				if(this.state.siguienteX){
+					siguiente = 'X';
+				}
+				var estado = "";
+				if (ganador) {
+					estado = 'Ganador: ' + ganador;
+				}
+				else{
+					estado = "Siguiente jugador: "+ siguiente;
+				}
+				var tam = this.props.tamanio;
+				return (
+				  <div>
+					<div className="claseEstado">{estado}</div>
+					{this.creaFilas(tam)}
+				  </div>
+				);
+			}
+		}
+		//carga un tablero cuadrado de 3*3 en un contenedor(className="game-board") como resultado de la creacion del objeto Tablero con atributo tamanio=3
+		class PantallaPrincipal extends React.Component {
+		  render() {
+			const TAMANIO_TABLERO = 3;
+			return (
+			  <div className="game">
+				<div className="game-board">
+				  <Tablero tamanio={TAMANIO_TABLERO}/>
+				</div>
+				<div className="game-info">
+				  <div>{/* status */}</div>
+				  <ol>{/* TODO */}</ol>
+				</div>
+			  </div>
+			);
+		  }
+		}
+
+		// ========================================
+		//carga el resultado de la creacion del objeto PantallaPrincipal en el contenedor1
+		ReactDOM.render(
+		  <PantallaPrincipal />,
+		  document.getElementById('contenedor1')
+		);
+
+    </script>
+    <!--
+      Note: this page is a great way to try React but it's not suitable for production.
+      It slowly compiles JSX with Babel in the browser and uses a large development build of React.
+
+      To set up a production-ready React build environment, follow these instructions:
+      * https://reactjs.org/docs/add-react-to-a-new-app.html
+      * https://reactjs.org/docs/add-react-to-an-existing-app.html
+
+      You can also use React without JSX, in which case you can remove Babel:
+      * https://reactjs.org/docs/react-without-jsx.html
+      * https://reactjs.org/docs/cdn-links.html
+    -->
+  </body>
+</html>
