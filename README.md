@@ -19,10 +19,15 @@ Para poder probar el segundo ejemplo(modularizado) hay que instalar un servidor 
 
 5-Añadir variables de entorno, equipo->clickDerecho->propiedades->configuracion avanzada del sistema->variables de entorno->nueva
   en mi caso:
+  
   CATALINA_HOME: C:\Users\Mario1234\Desktop\apache-tomcat-9.0.6;
+  
   CLASSPATH: C:\Users\Mario1234\Desktop\apache-tomcat-9.0.6\lib;
+  
   JRE_HOME: C:\Program Files\Java\jdk1.8.0_151;     (el directorio con la maquina de java de desarrollo JDK8 en mi caso)
+  
   editar la variable PATH añadirle al final: .... ;%CATALINA_HOME%\bin;
+  
 
 6-Ejecutar el C:\Users\Mario1234\Desktop\apache-tomcat-9.0.6\bin\startup.bat que en vuestro caso ...\bin\startup.bat
 
