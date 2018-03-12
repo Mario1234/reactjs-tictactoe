@@ -10,8 +10,8 @@ Para poder probar el segundo ejemplo(modularizado) hay que instalar un servidor 
 1-Descargar tomcat de la pagina (download->core->tu version de Windows)
 2-Descomprimir carpeta de tomcat
 3-Copiar contenido de la carpeta modulado a la carpeta ...\webapps\docs\ (esta dentro de la carpeta del tomcat)
-4-Añadir la siguiente linea de codigo en el archivo ...\webapps\ROOT\index.jsp , debajo de "<h3>Recommended Reading:</h3>"
-  "<h4><a href="${tomcatDocUrl}reactTresRaya.html">Tres en Raya</a></h4>"
+4-Añadir la siguiente linea de codigo en el archivo ...\webapps\ROOT\index.jsp , debajo de &lt;h3>Recommended Reading:&lt;/h3&gt;
+  &lt;h4&gt;&lt;a href="${tomcatDocUrl}reactTresRaya.html"&gt;Tres en Raya&lt;/a>&lt;/h4&gt;
 5-Añadir variables de entorno, equipo->clickDerecho->propiedades->configuracion avanzada del sistema->variables de entorno->nueva
   en mi caso:
   CATALINA_HOME: C:\Users\Mario1234\Desktop\apache-tomcat-9.0.6;
