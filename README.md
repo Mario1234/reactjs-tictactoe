@@ -7,16 +7,23 @@ Dentro de la carpeta modulado se encuentra el codigo del segundo ejemplo que es 
 modularizado por componentes React, cada componente React esta definido en su respectiva hoja de codigo .jsx
 Por ejemplo, el componente React Tablero esta definido en el archivo tablero.jsx
 Para poder probar el segundo ejemplo(modularizado) hay que instalar un servidor apache tomcat:
+
 1-Descargar tomcat de la pagina (download->core->tu version de Windows)
+
 2-Descomprimir carpeta de tomcat
+
 3-Copiar contenido de la carpeta modulado a la carpeta ...\webapps\docs\ (esta dentro de la carpeta del tomcat)
+
 4-Añadir la siguiente linea de codigo en el archivo ...\webapps\ROOT\index.jsp , debajo de &lt;h3>Recommended Reading:&lt;/h3&gt;
   &lt;h4&gt;&lt;a href="${tomcatDocUrl}reactTresRaya.html"&gt;Tres en Raya&lt;/a>&lt;/h4&gt;
+
 5-Añadir variables de entorno, equipo->clickDerecho->propiedades->configuracion avanzada del sistema->variables de entorno->nueva
   en mi caso:
   CATALINA_HOME: C:\Users\Mario1234\Desktop\apache-tomcat-9.0.6;
   CLASSPATH: C:\Users\Mario1234\Desktop\apache-tomcat-9.0.6\lib;
   JRE_HOME: C:\Program Files\Java\jdk1.8.0_151;     (el directorio con la maquina de java de desarrollo JDK8 en mi caso)
   editar la variable PATH añadirle al final: .... ;%CATALINA_HOME%\bin;
+
 6-Ejecutar el C:\Users\Mario1234\Desktop\apache-tomcat-9.0.6\bin\startup.bat que en vuestro caso ...\bin\startup.bat
+
 7-Abrir un navegador web y poner la URL http://localhost:8080/docs/reactTresRaya.html
